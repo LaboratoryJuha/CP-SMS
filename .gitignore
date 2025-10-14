@@ -1,21 +1,36 @@
-.gradle
-**/build/
-!**/src/**/build/
+# Gradle files
+.gradle/
+build/
+local.properties
 
-# Ignore Gradle GUI config
-gradle-app.setting
+# Android Studio
+*.iml
+.idea/
+.DS_Store
+/captures
 
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
+# Built application files
+*.apk
+*.ap_
+*.aab
 
-# Avoid ignore Gradle wrappper properties
-!gradle-wrapper.properties
+# Files for the ART/Dalvik VM
+*.dex
 
-# Cache of project
-.gradletasknamecache
+# Java class files
+*.class
 
-# Eclipse Gradle plugin generated files
-# Eclipse Core
-.project
-# JDT-specific (Eclipse Java Development Tools)
-.classpath
+# Generated files
+bin/
+gen/
+out/
+
+# Keystore files
+*.jks
+*.keystore
+
+# Log Files
+*.log
+
+# Android Profiling
+*.hprof
