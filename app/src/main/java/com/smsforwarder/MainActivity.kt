@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var switchForwarding: Switch
     private lateinit var tvRecipients: TextView
     private lateinit var btnAddRecipient: Button
+    private lateinit var tvSenderFilters: TextView
+    private lateinit var btnAddSenderFilter: Button
     private lateinit var tvKeywords: TextView
     private lateinit var btnAddKeyword: Button
     private lateinit var etAdditionalMessage: EditText
@@ -58,6 +60,8 @@ class MainActivity : AppCompatActivity() {
         switchForwarding = findViewById(R.id.switchForwarding)
         tvRecipients = findViewById(R.id.tvRecipients)
         btnAddRecipient = findViewById(R.id.btnAddRecipient)
+        tvSenderFilters = findViewById(R.id.tvSenderFilters)
+        btnAddSenderFilter = findViewById(R.id.btnAddSenderFilter)
         tvKeywords = findViewById(R.id.tvKeywords)
         btnAddKeyword = findViewById(R.id.btnAddKeyword)
         etAdditionalMessage = findViewById(R.id.etAdditionalMessage)
@@ -84,6 +88,16 @@ class MainActivity : AppCompatActivity() {
         // 수신자 목록 클릭 (삭제용)
         tvRecipients.setOnClickListener {
             showRemoveRecipientDialog()
+        }
+
+        // 발신자 필터 추가
+        btnAddSenderFilter.setOnClickListener {
+            showAddSenderFilterDialog()
+        }
+
+        // 발신자 필터 목록 클릭 (삭제용)
+        tvSenderFilters.setOnClickListener {
+            showRemoveSenderFilterDialog()
         }
 
         // 키워드 추가
@@ -119,6 +133,14 @@ class MainActivity : AppCompatActivity() {
             "설정된 수신자가 없습니다"
         } else {
             recipients.joinToString("\n")
+        }
+
+        // 발신자 필터 목록
+        val senderFilters = prefs.getSenderFilters()
+        tvSenderFilters.text = if (senderFilters.isEmpty()) {
+            "모든 발신자 허용 (필터 없음)"
+        } else {
+            senderFilters.joinToString("\n")
         }
 
         // 키워드 목록
@@ -167,6 +189,45 @@ class MainActivity : AppCompatActivity() {
                 prefs.removeRecipient(removed)
                 updateUI()
                 Toast.makeText(this, "수신자가 삭제되었습니다", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    private fun showAddSenderFilterDialog() {
+        val input = EditText(this)
+        input.hint = "발신자 번호 또는 이름 (예: 010-1234-5678 또는 은행)"
+
+        AlertDialog.Builder(this)
+            .setTitle("발신자 필터 추가")
+            .setMessage("특정 발신자의 메시지만 받으려면 발신자 번호나 이름을 입력하세요")
+            .setView(input)
+            .setPositiveButton("추가") { _, _ ->
+                val sender = input.text.toString().trim()
+                if (sender.isNotEmpty()) {
+                    prefs.addSenderFilter(sender)
+                    updateUI()
+                    Toast.makeText(this, "발신자 필터가 추가되었습니다", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    private fun showRemoveSenderFilterDialog() {
+        val senderFilters = prefs.getSenderFilters()
+        if (senderFilters.isEmpty()) {
+            Toast.makeText(this, "삭제할 발신자 필터가 없습니다", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("발신자 필터 삭제")
+            .setItems(senderFilters.toTypedArray()) { _, which ->
+                val removed = senderFilters[which]
+                prefs.removeSenderFilter(removed)
+                updateUI()
+                Toast.makeText(this, "발신자 필터가 삭제되었습니다", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("취소", null)
             .show()

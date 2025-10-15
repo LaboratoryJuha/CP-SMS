@@ -42,7 +42,7 @@ object SmsForwarder {
             Log.d(TAG, "전달 메시지: $forwardMessage")
 
             // 각 수신자에게 메시지 전송
-            val smsManager = SmsManager.getDefault()
+            val smsManager = context.getSystemService(SmsManager::class.java)
             
             recipients.forEach { recipient ->
                 try {

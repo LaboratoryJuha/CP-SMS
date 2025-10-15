@@ -50,6 +50,23 @@ class SmsReceiver : BroadcastReceiver() {
                         
                         // 자동 전달 기능이 활성화되어 있는지 확인
                         if (prefs.isForwardingEnabled()) {
+                            // 발신자 필터 확인
+                            val senderFilters = prefs.getSenderFilters()
+                            val senderMatches = if (senderFilters.isEmpty()) {
+                                // 발신자 필터가 없으면 모든 발신자 허용
+                                true
+                            } else {
+                                // 발신자 필터가 있으면 발신자가 필터 목록에 있는지 확인
+                                senderFilters.any { filter ->
+                                    senderNumber.contains(filter, ignoreCase = true)
+                                }
+                            }
+                            
+                            if (!senderMatches) {
+                                Log.d(TAG, "발신자가 필터와 일치하지 않아 전달하지 않음: $senderNumber")
+                                return
+                            }
+                            
                             val keywords = prefs.getKeywords()
                             val shouldForward = if (keywords.isEmpty()) {
                                 // 키워드가 없으면 모든 메시지 전달

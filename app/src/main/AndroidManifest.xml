@@ -9,6 +9,10 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <!-- 연락처 읽기 권한 (선택사항) -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <!-- 부팅 시 자동 실행 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- 포그라운드 서비스 (Android 9 이상) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     
     <!-- 하드웨어 기능 -->
     <uses-feature android:name="android.hardware.telephony" android:required="false" />
@@ -36,7 +40,7 @@
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BROADCAST_SMS">
-            <intent-filter android:priority="999">
+            <intent-filter android:priority="1000">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>

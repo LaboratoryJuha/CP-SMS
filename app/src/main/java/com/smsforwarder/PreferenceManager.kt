@@ -18,6 +18,7 @@ class PreferenceManager private constructor(context: Context) {
         private const val KEY_RECIPIENTS = "recipients"
         private const val KEY_KEYWORDS = "keywords"
         private const val KEY_ADDITIONAL_MESSAGE = "additional_message"
+        private const val KEY_SENDER_FILTERS = "sender_filters"
 
         // 구분자
         private const val DELIMITER = "|||"
@@ -115,6 +116,38 @@ class PreferenceManager private constructor(context: Context) {
 
     fun setAdditionalMessage(message: String) {
         prefs.edit().putString(KEY_ADDITIONAL_MESSAGE, message).apply()
+    }
+
+    /**
+     * 특정 발신자 필터 관리
+     * 비어있으면 모든 발신자로부터의 메시지를 처리, 있으면 해당 발신자의 메시지만 처리
+     */
+    fun getSenderFilters(): List<String> {
+        val sendersString = prefs.getString(KEY_SENDER_FILTERS, "") ?: ""
+        return if (sendersString.isEmpty()) {
+            emptyList()
+        } else {
+            sendersString.split(DELIMITER).filter { it.isNotEmpty() }
+        }
+    }
+
+    fun setSenderFilters(senders: List<String>) {
+        val sendersString = senders.joinToString(DELIMITER)
+        prefs.edit().putString(KEY_SENDER_FILTERS, sendersString).apply()
+    }
+
+    fun addSenderFilter(sender: String) {
+        val currentSenders = getSenderFilters().toMutableList()
+        if (!currentSenders.contains(sender)) {
+            currentSenders.add(sender)
+            setSenderFilters(currentSenders)
+        }
+    }
+
+    fun removeSenderFilter(sender: String) {
+        val currentSenders = getSenderFilters().toMutableList()
+        currentSenders.remove(sender)
+        setSenderFilters(currentSenders)
     }
 
     /**
